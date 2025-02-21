@@ -1,9 +1,10 @@
 from fastapi import FastAPI, UploadFile, File
 import cv2
 import numpy as np
-from io import BytesIO
+import uvicorn
+import os
 
-app = FastAPI()
+app = FastAPI()  # Định nghĩa app trước khi dùng
 
 @app.get("/")
 async def home():
@@ -19,3 +20,8 @@ async def predict(file: UploadFile = File(...)):
 
     _, encoded_img = cv2.imencode(".jpg", gray)
     return {"result": encoded_img.tobytes()}  # Trả ảnh đã xử lý
+
+# Chạy ứng dụng khi script được chạy trực tiếp
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # Render yêu cầu lấy PORT từ env
+    uvicorn.run(app, host="0.0.0.0", port=port)
